@@ -1,6 +1,8 @@
 package com.brayanpv.app.service.implementations;
 
+import com.brayanpv.app.component.mapper.LandscapeEventMapper;
 import com.brayanpv.app.model.message.LandscapeEvent;
+import com.brayanpv.app.model.request.TelegramMessage;
 import com.brayanpv.app.service.contracts.IConsumerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -12,9 +14,12 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class ConsumerService implements IConsumerService {
 
+    private final LandscapeEventMapper mapper;
+
     @Override
     @RabbitListener(queues = "${app.rabbitmq.queue}")
     public void consume(LandscapeEvent event) {
         log.info("Event received: {}", event.landscapeId());
+        TelegramMessage message = mapper.toTelegramMessage(event);
     }
 }
