@@ -7,6 +7,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -33,19 +35,38 @@ public class TelegramService implements ITelegramService {
 
     @Override
     public Mono<Void> sendPhoto(TelegramMessage message) {
-        String caption = String.format("%s*\n\n%s", message.title(), message.description());
+        String caption = String.format("*%s*\n\n%s", message.title(), message.description());
+        log.info("Sending telegram message to caption {}", caption);
+        log.info("Sending photo to chat {}", message.imageUrl());
+        //Map<String, Object> body = new HashMap<>();
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("chat_id", chatId);
+        body.add("photo", message.imageUrl());
+        body.add("caption", caption);
+        body.add("parse_mode", "Markdown");
 
-        Map<String, Object> body = new HashMap<>();
+        /*
+
         body.put("chat_id", chatId);
         body.put("photo", message.imageUrl());
         body.put("caption", caption);
         body.put("parse_mode", "Markdown");
 
+         */
+
         return webClient.post()
                 .uri("/bot" + botToken + "/sendPhoto")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                //.contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
                 .retrieve()
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                        response -> response.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+                                    log.error("Telegram API error response: {}", errorBody);
+                                    return Mono.error(new RuntimeException("Telegram error: " + errorBody));
+                                })
+                )
                 .bodyToMono(Void.class)
                 .doOnSuccess(v -> log.info("Photo sent to Telegram: {}", message.landscapeId()))
                 .doOnError(e -> log.error("Error sending photo: {}", e.getMessage()));
