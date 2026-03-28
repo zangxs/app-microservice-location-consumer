@@ -38,26 +38,16 @@ public class TelegramService implements ITelegramService {
         String caption = String.format("*%s*\n\n%s", message.title(), message.description());
         log.info("Sending telegram message to caption {}", caption);
         log.info("Sending photo to chat {}", message.imageUrl());
-        //Map<String, Object> body = new HashMap<>();
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("chat_id", chatId);
         body.add("photo", message.imageUrl());
         body.add("caption", caption);
         body.add("parse_mode", "Markdown");
 
-        /*
-
-        body.put("chat_id", chatId);
-        body.put("photo", message.imageUrl());
-        body.put("caption", caption);
-        body.put("parse_mode", "Markdown");
-
-         */
 
         return webClient.post()
                 .uri("/bot" + botToken + "/sendPhoto")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                //.contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),

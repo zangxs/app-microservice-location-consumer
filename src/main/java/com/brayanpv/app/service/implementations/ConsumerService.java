@@ -3,12 +3,14 @@ package com.brayanpv.app.service.implementations;
 import com.brayanpv.app.component.mapper.LandscapeEventMapper;
 import com.brayanpv.app.model.message.LandscapeEvent;
 import com.brayanpv.app.model.request.TelegramMessage;
+import com.brayanpv.app.model.response.ApiResponse;
 import com.brayanpv.app.service.contracts.IConsumerService;
 import com.brayanpv.app.service.contracts.ITelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +30,10 @@ public class ConsumerService implements IConsumerService {
                 .then(telegramService.sendLocation(message))
                 .then(telegramService.sendApprovalButtons(message))
                 .subscribe();
+    }
+
+    @Override
+    public Mono<ApiResponse> processCallback(String data) {
+        return null;
     }
 }
