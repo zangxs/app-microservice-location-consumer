@@ -36,6 +36,6 @@ app:
     queue: landscape.pending.queue
     routing-key: landscape.pending
 
-#telegram:
-#  bot-token: ${TELEGRAM_BOT_TOKEN:tu_token_aqui}
-#  chat-id: ${TELEGRAM_CHAT_ID:tu_chat_id_aqui}
+telegram:
+  bot-token: ${TELEGRAM_BOT_TOKEN:}
+  chat-id: ${TELEGRAM_CHAT_ID:}
