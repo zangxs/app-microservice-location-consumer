@@ -1,7 +1,7 @@
 package com.brayanpv.app.component.mapper;
 
-import com.brayanpv.app.model.message.LandscapeEvent;
 import com.brayanpv.app.model.request.TelegramMessage;
+import com.brayanspv.library.model.events.LandscapeEvent;
 import org.springframework.stereotype.Component;
 
 @Component
