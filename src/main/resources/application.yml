@@ -35,6 +35,8 @@ app:
     exchange: landscape.exchange
     queue: landscape.pending.queue
     routing-key: landscape.pending
+    status-queue: landscape.status.queue
+    status-routing-key: landscape.status
 
 telegram:
   bot-token: ${TELEGRAM_BOT_TOKEN:8786304847:AAEFBuo_OlNYwYSD7ORLmtzLMFj7XRYaZfs}

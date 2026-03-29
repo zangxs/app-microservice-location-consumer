@@ -3,10 +3,11 @@ package com.brayanpv.app.service.implementations;
 import com.brayanpv.app.component.mapper.LandscapeEventMapper;
 import com.brayanpv.app.model.request.TelegramMessage;
 import com.brayanpv.app.model.response.ApiResponse;
-import com.brayanpv.app.repositories.contracts.ILandscapeRepository;
 import com.brayanpv.app.service.contracts.IConsumerService;
+import com.brayanpv.app.service.contracts.IRabbitMQService;
 import com.brayanpv.app.service.contracts.ITelegramService;
 import com.brayanspv.library.model.events.LandscapeEvent;
+import com.brayanspv.library.model.events.LandscapeStatusEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -23,7 +24,7 @@ public class ConsumerService implements IConsumerService {
 
     private final LandscapeEventMapper mapper;
     private final ITelegramService telegramService;
-    private final ILandscapeRepository  landscapeRepository;
+    private final IRabbitMQService rabbitMQService;
 
     @Override
     @RabbitListener(queues = "${app.rabbitmq.queue}")
@@ -48,7 +49,9 @@ public class ConsumerService implements IConsumerService {
 
         String status = action.equals("APPROVE") ? "APPROVED" : "REJECTED";
 
-        return landscapeRepository.updateStatus(status, landscapeId)
+        LandscapeStatusEvent statusEvent = new LandscapeStatusEvent(landscapeId, status);
+
+        return rabbitMQService.publishStatusEvent(statusEvent)
                 .thenReturn(ApiResponse.builder()
                         .dateTime(LocalDateTime.now(ZoneOffset.UTC))
                         .code(200)
