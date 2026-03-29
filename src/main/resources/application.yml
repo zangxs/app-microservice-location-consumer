@@ -1,18 +1,19 @@
 spring:
   application:
     name: app-microservice-location-consumer
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5433/landscapedb
-    username: landscape
-    password: landscape
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
     virtual-host: /
+
 server:
   port: 8002
+
+logging:
+  level:
+    ROOT: INFO
 
 management:
   endpoints:
@@ -23,13 +24,6 @@ management:
     health:
       show-details: always
 
-
-minio:
-  url: http://localhost:9000
-  access-key: minioadmin
-  secret-key: minioadmin
-  bucket: landscapes
-
 app:
   rabbitmq:
     exchange: landscape.exchange
@@ -39,5 +33,5 @@ app:
     status-routing-key: landscape.status
 
 telegram:
-  bot-token: ${TELEGRAM_BOT_TOKEN:8786304847:AAEFBuo_OlNYwYSD7ORLmtzLMFj7XRYaZfs}
-  chat-id: ${TELEGRAM_CHAT_ID:954491851}
+  bot-token: ${TELEGRAM_BOT_TOKEN:}
+  chat-id: ${TELEGRAM_CHAT_ID:}
