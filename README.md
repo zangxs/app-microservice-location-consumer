@@ -48,6 +48,10 @@ Copia la URL generada (ej: `https://abc.trycloudflare.com`).
 3. Registrar el webhook en Telegram:
 ```
 https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook?url=https://abc.trycloudflare.com/webhook/telegram
+https://api.telegram.org/bot8786304847:AAFTbIw5HZM_d3lT1Uq5qRoc-l4RJshDZO8/setWebhook?url=https://believes-processor-relevant-pubmed.trycloudflare.com/webhook/telegram
+
+https://api.telegram.org/bot8786304847:AAFTbIw5HZM_d3lT1Uq5qRoc-l4RJshDZO8/setWebhook?url=https://drinks-defeat-quality-returned.trycloudflare.com/webhook/telegram
+
 ```
 Debe responder `{"ok":true,"result":true}`.
 
@@ -83,7 +87,7 @@ Este endpoint es llamado automáticamente por Telegram cuando el moderador presi
 ```
 Recibe LandscapeEvent de RabbitMQ
         ↓
-Envía foto a Telegram (sendPhoto)
+Envía foto a Telegram (sendPhoto) ← puede fallar (Telegram caído, ngrok caído)
         ↓
 Envía ubicación a Telegram (sendLocation)
         ↓
@@ -95,7 +99,7 @@ Telegram llama al webhook /webhook/telegram
         ↓
 Consumer extrae landscapeId y decisión
         ↓
-Publica LandscapeStatusEvent en RabbitMQ
+Publica LandscapeStatusEvent en RabbitMQ ← puede fallar (RabbitMQ caído)
         ↓
 Producer recibe el evento y actualiza BD
 ```
