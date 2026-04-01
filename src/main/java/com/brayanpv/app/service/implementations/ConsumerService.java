@@ -35,6 +35,7 @@ public class ConsumerService implements IConsumerService {
         telegramService.sendPhoto(message)
                 .then(telegramService.sendLocation(message))
                 .then(telegramService.sendApprovalButtons(message))
+                .doOnError(e -> log.error("Error sending to Telegram, Producer will retry: {}", event.landscapeId()))
                 .subscribe();
     }
 
